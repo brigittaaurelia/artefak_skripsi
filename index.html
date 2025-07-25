@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <link rel="icon" href="img/stis.png" type="image/png">
+    <title>Dashboard Deteksi Tumpahan Minyak</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Roboto:wght@500;700&display=swap" rel="stylesheet"> 
+    
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+
+    <!-- Memuat CSS untuk DataTables -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+
+    <!-- Memuat jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Memuat JavaScript untuk DataTables -->
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="js/data_for_js.js"></script>
+
+    <!-- Template Stylesheet -->
+    <link href="css/style.css" rel="stylesheet">
+    <style>
+        .content {
+            width: 100% !important;
+            margin-left: 0 !important;
+        }
+        #statTable tbody tr td {
+            border: 1px solid rgb(10, 10, 10)!important;
+        }
+        #evalTable tbody tr td {
+            border: 1px solid rgb(10, 10, 10)!important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid position-relative d-flex p-0">
+        <!-- Content Start -->
+        <div class="content">
+            <!-- Navbar Start -->
+            <nav class="navbar navbar-expand bg-secondary navbar-dark sticky-top px-4 py-1">
+                <a href="index.html" class="navbar-brand mx-0 mb-0 mt-2">
+                    <h4 class="text-primary"><img src="img/stis.png" alt="Logo STIS" style="width: 50px; height: 50px;" class="me-2">
+                        DETEKSI TUMPAHAN MINYAK PADA PERAIRAN BINTAN BAGIAN UTARA DENGAN MACHINE LEARNING</h4>
+                </a>
+            </nav>
+            <!-- Navbar End -->
+
+
+            <!-- Sale & Revenue Start -->
+            <div class="container-fluid pt-4 px-4">
+                <div class="row g-4">
+                    <!-- Kotak Luas Tumpahan Minyak + Look-Alike -->
+                    <div class="col-sm-4 col-xl-4">
+                        <div class="bg-secondary rounded d-flex align-items-center justify-content-start p-4 h-100">
+                            <i class="fa fa-chart-area fa-3x text-primary"></i>
+                            <div class="ms-3 w-100">
+                                <div class="d-flex">
+                                    <!-- Tumpahan Minyak -->
+                                    <div class="pe-4 me-4 border-end">
+                                        <p class="mb-1" style="font-size: small;">Luas Area Tumpahan Minyak (m<sup>2</sup>)</p>
+                                        <h6 class="mb-0" id="luasMinyak">5,400,241</h6>
+                                    </div>
+                                    <!-- Look-Alike -->
+                                    <div>
+                                        <p class="mb-1" style="font-size: small;">Luas Area <i>Look-Alike</i> (m<sup>2</sup>)</p>
+                                        <h6 class="mb-0" id="luasLookAlike">1,333,045</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Kotak Total Piksel Air, Minyak, Darat -->
+                    <div class="col-sm-8 col-xl-8"> <!-- Lebar sekitar 2/3 -->
+                        <div class="bg-secondary rounded d-flex justify-content-between p-4 h-100">
+                            <!-- Air -->
+                            <div class="d-flex align-items-center pe-4 me-4 border-end" style="flex: 1;">
+                                <i class="fa fa-tint fa-3x text-primary"></i>
+                                <div class="ms-3">
+                                    <p class="mb-2">Total Piksel Air</p>
+                                    <h6 class="mb-0" id="totalAir">11,906,473</h6>
+                                </div>
+                            </div>
+                            <!-- Minyak -->
+                            <div class="d-flex align-items-center pe-4 me-4 border-end" style="flex: 1;">
+                                <i class="fa fa-exclamation-triangle fa-3x text-primary"></i>
+                                <div class="ms-3">
+                                    <p class="mb-2">Total Piksel Minyak</p>
+                                    <h6 class="mb-0" id="totalMinyak">137,414</h6>
+                                </div>
+                            </div>
+                            <!-- Darat -->
+                            <div class="d-flex align-items-center" style="flex: 1;">
+                                <i class="fa fa-industry fa-3x text-primary"></i>
+                                <div class="ms-3">
+                                    <p class="mb-2">Total Piksel Darat</p>
+                                    <h6 class="mb-0" id="totalDarat">10,940,427</h6>
+                                </div>
+                            </div>
+                        </div>                    
+                    </div>
+                </div>
+            </div>
+            <!-- Sale & Revenue End -->
+
+
+            <!-- Sales Chart Start -->
+            <div class="container-fluid pt-4 px-4"> 
+                <div class="row g-4">
+                    <div class="col-sm-24 col-xl-12">
+                        <div class="bg-secondary text-center rounded p-4">
+                            <div class="d-flex align-items-center justify-content-between mb-4">
+                                <h6 class="mb-0">
+                                    PEMETAAN TUMPAHAN MINYAK DENGAN MODEL MACHINE LEARNING (XGBOOST)
+                                </h6>
+                                <select id="mapSelector" class="form-select w-auto" onchange="changeMap()">
+                                    <option value="DASHBOARD_MAP23.html">23 Maret 2024</option>
+                                    <option value="DASHBOARD_MAP29.html">29 Maret 2024</option>
+                                    <option value="DASHBOARD_MAP12.html">12 Maret 2025</option>
+                                    <option value="DASHBOARD_MAP18.html">18 Maret 2025</option>
+                                    <option value="DASHBOARD_MAP30.html">30 Maret 2025</option>
+                                </select>
+                            </div>
+                            <iframe id="mapIframe" src="DASHBOARD_MAP23.html" style="width:100%; height:500px; border:none; border-radius:10px;"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                const mapData = {
+                    "DASHBOARD_MAP23.html": {
+                        minyak: "5,400,241",
+                        lookalike: "1,333,045",
+                        air: "11,906,473",
+                        piksel_minyak: "137,414",
+                        darat: "10,940,427"
+                    },
+                    "DASHBOARD_MAP29.html": {
+                        minyak: "414,932",
+                        lookalike: "0",
+                        air: "11,872,499",
+                        piksel_minyak: "8,479",
+                        darat: "11,103,336"
+                    },
+                    "DASHBOARD_MAP12.html": {
+                        minyak: "6,174",
+                        lookalike: "0",
+                        air: "11,951,450",
+                        piksel_minyak: "126",
+                        darat: "11,032,738"
+                    },
+                    "DASHBOARD_MAP18.html": {
+                        minyak: "0",
+                        lookalike: "116,326",
+                        air: "11,867,373",
+                        piksel_minyak: "2,374",
+                        darat: "11,114,567"
+                    },
+                    "DASHBOARD_MAP30.html": {
+                        minyak: "889,497",
+                        lookalike: "596,526",
+                        air: "11,650,246",
+                        piksel_minyak: "30,327",
+                        darat: "11,303,741"
+                    }
+                };
+
+                function changeMap() {
+                    const selector = document.getElementById('mapSelector');
+                    const iframe = document.getElementById('mapIframe');
+                    const selectedValue = selector.value;
+                    iframe.src = selectedValue;
+                    updateStats(selectedValue);
+                }
+
+                function updateStats(mapFile) {
+                    const data = mapData[mapFile];
+                    if (!data) return;
+
+                    document.getElementById('luasMinyak').textContent = data.minyak;
+                    document.getElementById('luasLookAlike').textContent = data.lookalike;
+
+                    document.getElementById('totalAir').textContent = data.air;
+                    document.getElementById('totalMinyak').textContent = data.piksel_minyak;
+                    document.getElementById('totalDarat').textContent = data.darat;
+                }
+
+                // Initial update
+                document.addEventListener("DOMContentLoaded", function() {
+                    updateStats("DASHBOARD_MAP23.html");
+                });
+            </script>
+            <!-- Sales Chart End -->
+
+
+            <!-- Recent Sales Start -->
+            <div class="container-fluid pt-4 px-4">
+                <div class="bg-secondary text-center rounded p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <h6 class="mb-0">HASIL EVALUASI SETIAP ALGORITMA</h6>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="evalTable" class="table text-start align-middle table-bordered table-hover mb-0">
+                            <thead>
+                                <tr class="text-white" style="background-color: brown;text-align: center;">
+                                    <th scope="col">Algoritma</th>
+                                    <th scope="col">Accuracy</th>
+                                    <th scope="col">Precision</th>
+                                    <th scope="col">Recall</th>
+                                    <th scope="col">F1-Score</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Support Vector Machine</td>
+                                    <td style="text-align: right;">0.9218</td>
+                                    <td style="text-align: right;">0.9771</td>
+                                    <td style="text-align: right;">0.9218</td>
+                                    <td style="text-align: right;">0.9445</td>
+                                </tr>
+                                <tr>
+                                    <td>K-Nearest Neighbors</td>
+                                    <td style="text-align: right;">0.9765</td>
+                                    <td style="text-align: right;">0.9723</td>
+                                    <td style="text-align: right;">0.9765</td>
+                                    <td style="text-align: right;">0.9732</td>
+                                </tr>
+                                <tr>
+                                    <td>Gaussian Mixture Model</td>
+                                    <td style="text-align: right;">0.9678</td>
+                                    <td style="text-align: right;">0.9526</td>
+                                    <td style="text-align: right;">0.9678</td>
+                                    <td style="text-align: right;">0.9602</td>
+                                </tr>
+                                <tr>
+                                    <td>Gaussian Naive Bayes</td>
+                                    <td style="text-align: right;">0.9683</td>
+                                    <td style="text-align: right;">0.9711</td>
+                                    <td style="text-align: right;">0.9683</td>
+                                    <td style="text-align: right;">0.9696</td>
+                                </tr>
+                                <tr>
+                                    <td>Linear Discriminant Analysis</td>
+                                    <td style="text-align: right;">0.5437</td>
+                                    <td style="text-align: right;">0.3634</td>
+                                    <td style="text-align: right;">0.5437</td>
+                                    <td style="text-align: right;">0.4015</td>
+                                </tr>
+                                <tr>
+                                    <td>Random Forest</td>
+                                    <td style="text-align: right;">0.8764</td>
+                                    <td style="text-align: right;">0.9720</td>
+                                    <td style="text-align: right;">0.9772</td>
+                                    <td style="text-align: right;">0.9739</td>
+                                </tr>
+                                <tr style="background-color: aqua;color: black;font-weight: bold;">
+                                    <td>Extreme Gradient Boosting</td>
+                                    <td style="text-align: right;">0.9772</td>
+                                    <td style="text-align: right;">0.9733</td>
+                                    <td style="text-align: right;">0.9772</td>
+                                    <td style="text-align: right;">0.9739</td>
+                                </tr>
+                                <tr>
+                                    <td>Convolutional Neural Network</td>
+                                    <td style="text-align: right;">0.9764</td>
+                                    <td style="text-align: right;">0.9732</td>
+                                    <td style="text-align: right;">0.9764</td>
+                                    <td style="text-align: right;">0.9709</td>
+                                </tr>
+                                <tr>
+                                    <td>Long Short-Term Memory</td>
+                                    <td style="text-align: right;">0.9752</td>
+                                    <td style="text-align: right;">0.9715</td>
+                                    <td style="text-align: right;">0.9752</td>
+                                    <td style="text-align: right;">0.9717</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <script>
+                            $(document).ready(function () {
+                                $('#evalTable').DataTable({
+                                    "ordering": true,   // Sorting aktif untuk semua kolom
+                                    "paging": false,    // Matikan pagination
+                                    "info": false,      // Matikan info
+                                    "searching": false, // Matikan pencarian
+                                    "columnDefs": [
+                                        { 
+                                            "targets": 0,  // Kolom Algoritma
+                                            "orderable": false // Matikan sorting untuk kolom pertama (Algoritma)
+                                        }
+                                    ],
+                                    "order": []  // Mengatur urutan kolom default (tidak ada kolom yang terurut pertama kali)
+                                });
+                            });
+                        </script>
+                    </div>
+                </div>
+            </div>
+            <!-- Recent Sales End -->
+
+            <div class="container-fluid pt-4 px-4">
+                <div class="bg-secondary text-center rounded p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <h6 class="mb-0">FEATURE IMPORTANCE</h6>
+                        <div style="width: 200px;">
+                            <select id="importanceDropdown" class="form-select">
+                                <option value="gain">Berdasarkan Gain</option>
+                                <option value="frequency">Berdasarkan Frequency</option>
+                            </select>
+                            </div>
+                    </div>
+                    <div class="table-responsive">
+                    
+                    <!-- Elemen grafik -->
+                    <div id="importanceChart" style="width: 100%; height: 500px;"></div>
+                    
+                    <!-- Load Plotly -->
+                    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+                    
+                    <script>
+                        // Data importance berdasarkan Gain
+                        const gainData = {
+                        features: [
+                            "Homogenity_VV", "multiply", "Entropy_VV",
+                            "Angular_Second_Moment_VV", "average", "add",
+                            "divide", "VV", "subtract"
+                        ],
+                        importance: [
+                            322.859222, 255.421799, 128.297333,
+                            84.842628, 56.139015, 40.675606,
+                            12.919510, 10.641134, 8.888569
+                        ]
+                        };
+                    
+                        // Data importance berdasarkan Frequency
+                        const freqData = {
+                        features: [
+                            "Entropy_VV", "Homogenity_VV", "divide",
+                            "Angular_Second_Moment_VV", "multiply", "add",
+                            "subtract", "VV", "average"
+                        ],
+                        importance: [
+                            845.0, 841.0, 820.0,
+                            771.0, 667.0, 414.0,
+                            401.0, 295.0, 194.0
+                        ]
+                        };
+                    
+                        function plotImportance(type) {
+                        const data = type === 'gain' ? gainData : freqData;
+                    
+                        const trace = {
+                            x: data.importance,
+                            y: data.features,
+                            type: 'bar',
+                            orientation: 'h',
+                            marker: { color: 'steelblue' }
+                        };
+                    
+                        const layout = {
+                            title: `Feature Importance Berdasarkan ${type === 'gain' ? 'Gain' : 'Frequency'}`,
+                            xaxis: { title: type === 'gain' ? 'Gain' : 'Frequency' },
+                            margin: { l: 180 },
+                            font: { color: 'white' },
+                            paper_bgcolor: 'rgba(0,0,0,0)',
+                            plot_bgcolor: 'rgba(0,0,0,0)'
+                        };
+                    
+                        Plotly.newPlot('importanceChart', [trace], layout);
+                        }
+                    
+                        // Event listener untuk dropdown
+                        document.getElementById('importanceDropdown').addEventListener('change', function () {
+                        plotImportance(this.value);
+                        });
+                    
+                        // Inisialisasi default
+                        plotImportance('gain');
+                    </script>  
+                    </div>
+                </div>
+            </div>
+            <div class="container-fluid pt-4 px-4">
+                <div class="row g-4">
+                    <div class="col-sm-12 col-xl-12">
+                        <div class="bg-secondary rounded h-100 p-4">
+                            <div class="bg-secondary rounded h-100 p-4">
+                            <!-- Judul dan Dropdown Variabel -->
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <h6 class="mb-0 text-white">RINGKASAN STATISTIK PER VARIABEL BERDASARKAN KELAS</h6>
+                            <div style="width: 270px;">
+                            <select id="variableDropdown" class="form-select">
+                                <option value="VV">VV</option>
+                                <option value="divide">Divide</option>
+                                <option value="add">Add</option>
+                                <option value="subtract">Subtract</option>
+                                <option value="multiply">Multiply</option>
+                                <option value="average">Average</option>
+                                <option value="Homogenity_VV">Homogenity VV</option>
+                                <option value="Entropy_VV">Entropy VV</option>
+                                <option value="Angular_Second_Moment_VV">Angular Second Moment VV</option>
+                            </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Tabel Statistik -->
+                        <table id="statTable" class="table table-bordered text-white">
+                            <thead>
+                            <tr style="background-color: brown;border-bottom: 1px solid white;">
+                                <th>Kelas</th>
+                                <th>Mean</th>
+                                <th>Median</th>
+                                <th>Min</th>
+                                <th>Max</th>
+                                <th>Std Dev</th>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                        
+                        <script>
+                        // Fungsi bantu statistik
+                        function mean(arr) {
+                            return arr.reduce((a, b) => a + b, 0) / arr.length;
+                        }
+                        function median(arr) {
+                            const sorted = [...arr].sort((a, b) => a - b);
+                            const mid = Math.floor(sorted.length / 2);
+                            return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+                        }
+                        function std(arr) {
+                            const avg = mean(arr);
+                            const squareDiffs = arr.map(v => Math.pow(v - avg, 2));
+                            return Math.sqrt(mean(squareDiffs));
+                        }
+                        function min(arr) {
+                            return Math.min(...arr);
+                        }
+                        function max(arr) {
+                            return Math.max(...arr);
+                        }
+                        
+                        // Variabel dan label kamu
+                        const variables = ['VV', 'divide', 'add', 'subtract', 'multiply', 'average', 'Homogenity_VV', 'Entropy_VV', 'Angular_Second_Moment_VV'];
+                        const data = [];
+                        for (let i = 0; i < label.length; i++) {
+                            data.push({
+                            label: label[i],
+                            VV: VV[i],
+                            divide: divide[i],
+                            add: add[i],
+                            subtract: subtract[i],
+                            multiply: multiply[i],
+                            average: average[i],
+                            Homogenity_VV: Homogenity_VV[i],
+                            Entropy_VV: Entropy_VV[i],
+                            Angular_Second_Moment_VV: Angular_Second_Moment_VV[i]
+                            });
+                        }
+                        
+                        let dataTable;  // Variabel global untuk DataTable
+
+                        function updateStatTable(variable) {
+                            if (!dataTable) return;
+
+                            // Hapus data sebelumnya
+                            dataTable.clear();
+
+                            // Tambahkan data baru
+                            [0, 1, 2].forEach(labelVal => {
+                                const filtered = data.filter(row => row.label === labelVal).map(row => row[variable]);
+                                dataTable.row.add([
+                                    `Kelas ${labelVal}`,
+                                    mean(filtered).toFixed(3),
+                                    median(filtered).toFixed(3),
+                                    min(filtered).toFixed(3),
+                                    max(filtered).toFixed(3),
+                                    std(filtered).toFixed(3)
+                                ]);
+                            });
+
+                            // Render ulang tabel
+                            dataTable.draw();
+                        }                   
+                        // Listener untuk dropdown variabel
+                        document.getElementById('variableDropdown').addEventListener('change', function () {
+                            updateStatTable(this.value);
+                        });
+                        
+                        // Inisialisasi awal
+                        updateStatTable('VV');
+                        </script>       
+                        
+                        <script>
+                            $(document).ready(function () {
+                                dataTable = $('#statTable').DataTable({
+                                    "ordering": true,
+                                    "paging": false,
+                                    "info": false,
+                                    "searching": false,
+                                    "columnDefs": [
+                                        {
+                                            "targets": 0,
+                                            "orderable": false
+                                        }
+                                    ],
+                                    "order": []
+                                });
+
+                                // Inisialisasi awal
+                                updateStatTable('VV');
+                            });
+                        </script>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        <!-- Footer Start -->
+        <div class="bg-secondary p-4 mt-4" style="border-top-left-radius: 1rem; border-top-right-radius: 1rem;">
+            <div class="row mx-0">
+                <div class="col-12 col-sm-6 text-center text-sm-start">
+                    &copy; <a href="https://www.instagram.com/brgttaurelia/" target="_blank" rel="noopener noreferrer">Brigitta Aurelia Putri Suhendi</a>, All Right Reserved. 
+                </div>
+                <div class="col-12 col-sm-6 text-center text-sm-end">
+                    Mahasiswa D-IV Komputasi Statistik Polstat STIS
+                </div>
+            </div>
+        </div>
+        <!-- Footer End -->
+
+        </div>
+        <!-- Content End -->
+
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/chart/chart.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="lib/tempusdominus/js/moment.min.js"></script>
+    <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
+    <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
+</body>
+
+</html>
